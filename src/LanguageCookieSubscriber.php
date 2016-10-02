@@ -2,6 +2,10 @@
 
 namespace Drupal\language_cookie;
 
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\language\LanguageNegotiationMethodManager;
+use Drupal\language\LanguageNegotiator;
+use Drupal\language\LanguageNegotiatorInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -11,14 +15,62 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class LanguageCookieSubscriber implements EventSubscriberInterface {
 
+  /**
+   * Callback helper.
+   *
+   * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
+   *
+   * @return array|bool
+   */
+  public function _get_language(GetResponseEvent $event) {
+    $request = $event->getRequest();
+
+    /** @var LanguageNegotiatorInterface $languageNegotiator */
+    $languageNegotiator = \Drupal::getContainer()->get('language_negotiator');
+    $user = \Drupal::currentUser();
+    $languageNegotiator->setCurrentUser($user->getAccount());
+
+    $methods = $languageNegotiator->getNegotiationMethods(LanguageInterface::TYPE_INTERFACE);
+    uasort($methods, 'Drupal\Component\Utility\SortArray::sortByWeightElement');
+
+    unset($methods['language-cookie']);
+    unset($methods['language-selected']);
+
+    foreach ($methods as $method_id => $method_definition) {
+      $lang = $languageNegotiator->getNegotiationMethodInstance($method_id)->getLangcode($request);
+      if ($lang) {
+        return [$lang, $method_id];
+      }
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * Event callback
+   *
+   * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
+   */
   public function language_cookie_set(GetResponseEvent $event) {
-    $lang = \Drupal::languageManager()->getCurrentLanguage()->getId();
+    // Todo: clean this.
+    $languageNegotiator = \Drupal::getContainer()->get('language_negotiator');
+    $user = \Drupal::currentUser();
+    $languageNegotiator->setCurrentUser($user->getAccount());
+    $methods = $languageNegotiator->getNegotiationMethods(LanguageInterface::TYPE_INTERFACE);
 
-    $config = \Drupal::config('language_cookie.negotiation');
-    $param = $config->get('param');
+    // Do not set cookie if not configured in Language Negotiation.
+    if (!isset($methods['language-cookie'])) {
+      return;
+    }
 
-    if ((!isset($_COOKIE[$param]) || (isset($_COOKIE[$param]) && $_COOKIE[$param] != $lang)) || $config->get('set_on_every_pageload')) {
-      $this->_language_cookie_set($lang);
+    if ($lang = $this->_get_language($event)) {
+      $config = \Drupal::config('language_cookie.negotiation');
+      $param = $config->get('param');
+
+      list($lang, $method) = $lang;
+      if ((!isset($_COOKIE[$param]) || (isset($_COOKIE[$param]) && $_COOKIE[$param] != $lang)) || $config->get('set_on_every_pageload')) {
+        $this->_language_cookie_set($lang);
+      }
     }
   }
 
