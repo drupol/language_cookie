@@ -1,0 +1,5 @@
+services:
+  language_cookie.language_cookie_subscriber:
+    class: Drupal\language_cookie\LanguageCookieSubscriber
+    tags:
+      - { name: 'event_subscriber' }

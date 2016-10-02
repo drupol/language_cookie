@@ -1,0 +1,8 @@
+name: "Language Cookie"
+description: "Provides an additional language negotiation fallback using a cookie"
+package: Multilingual
+dependencies:
+ - locale
+configure: language.negotiation
+core: 8.x
+type: module

@@ -1,0 +1,7 @@
+language.negotiation_cookie:
+  path: '/admin/config/regional/language/detection/language_cookie'
+  defaults:
+    _form: 'Drupal\language_cookie\Form\NegotiationLanguageCookieForm'
+    _title: 'Language cookie detection configuration'
+  requirements:
+    _permission: 'administer languages'
