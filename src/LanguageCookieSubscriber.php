@@ -33,8 +33,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
     $methods = $languageNegotiator->getNegotiationMethods(LanguageInterface::TYPE_INTERFACE);
     uasort($methods, 'Drupal\Component\Utility\SortArray::sortByWeightElement');
 
-    unset($methods['language-cookie']);
-    unset($methods['language-selected']);
+    unset($methods['language-cookie'], $methods['language-selected']);
 
     foreach ($methods as $method_id => $method_definition) {
       $lang = $languageNegotiator->getNegotiationMethodInstance($method_id)->getLangcode($request);
@@ -68,7 +67,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
       $param = $config->get('param');
 
       list($lang, $method) = $lang;
-      if ((!isset($_COOKIE[$param]) || (isset($_COOKIE[$param]) && $_COOKIE[$param] != $lang)) || $config->get('set_on_every_pageload')) {
+      if ((! \Drupal::request()->cookies->has($param) || (\Drupal::request()->cookies->get($param) != $lang)) || $config->get('set_on_every_pageload')) {
         $this->_language_cookie_set($lang);
       }
     }
