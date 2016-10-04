@@ -6,7 +6,7 @@ use Drupal\language\LanguageNegotiationMethodBase;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class for identifying language from a language selection page.
+ * Class for identifying language from a language cookie.
  *
  * @todo explain why weight is -5 (or -4)
  *
