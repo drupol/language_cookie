@@ -2,28 +2,30 @@
 
 namespace Drupal\language_cookie\Plugin\LanguageNegotiation;
 
-use Drupal\Core\Annotation\Translation;
-use Drupal\language\Annotation\LanguageNegotiation;
 use Drupal\language\LanguageNegotiationMethodBase;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class for identifying language from a language selection page.
  *
+ * @todo explain why weight is -5 (or -4)
+ *
  * @LanguageNegotiation(
- *   weight = -4,
+ *   weight = -5,
  *   name = @Translation("Cookie"),
  *   description = @Translation("Determine the language from a cookie"),
  *   id = Drupal\language_cookie\Plugin\LanguageNegotiation\LanguageNegotiationCookie::METHOD_ID,
- *   config_route_name = "language.negotiation_cookie"
+ *   config_route_name = "language_cookie.negotiation_cookie"
  * )
  */
 class LanguageNegotiationCookie extends LanguageNegotiationMethodBase {
 
   /**
-   * The language negotiation method id.
+   * The language negotiation method ID.
+   *
+   * Uses an underscore instead of a dash as this this what was used in 7.x.
    */
-  const METHOD_ID = 'language-cookie';
+  const METHOD_ID = 'language_cookie';
 
   /**
    * {@inheritdoc}
@@ -35,6 +37,5 @@ class LanguageNegotiationCookie extends LanguageNegotiationMethodBase {
     return ($request->cookies->has($param) && in_array($request->cookies->get($param), array_keys($this->languageManager->getLanguages())))
       ? $request->cookies->get($param) : FALSE;
   }
-
 
 }

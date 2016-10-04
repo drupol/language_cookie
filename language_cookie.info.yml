@@ -1,5 +1,5 @@
 name: "Language Cookie"
-description: "Provides an additional language negotiation fallback using a cookie"
+description: "Allows usage of cookies to remember the user's last language."
 package: Multilingual
 dependencies:
  - locale
