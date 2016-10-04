@@ -30,11 +30,11 @@ class LanguageNegotiationCookie extends LanguageNegotiationMethodBase {
    */
   public function getLangcode(Request $request = NULL) {
     $config = \Drupal::config('language_cookie.negotiation');
-    $languages = $this->languageManager->getLanguages();
-
     $param = $config->get('param');
 
-    return (\Drupal::request()->cookies->has($param) && in_array(\Drupal::request()->cookies->get($param), array_keys($languages)))
-      ? \Drupal::request()->cookies->get($param) : FALSE;
+    return ($request->cookies->has($param) && in_array($request->cookies->get($param), array_keys($this->languageManager->getLanguages())))
+      ? $request->cookies->get($param) : FALSE;
   }
+
+
 }

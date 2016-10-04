@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
 class NegotiationLanguageCookieForm extends ConfigFormBase {
 
   /**
-   * The variable containing the conditions configuration.
+   * The configuration.
    *
    * @var Config
    */
