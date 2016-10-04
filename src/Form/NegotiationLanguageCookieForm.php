@@ -5,6 +5,7 @@ namespace Drupal\language_cookie\Form;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\language_cookie\LanguageCookieConditionInterface;
 
 /**
  * Configure the Language cookie negotiation method for this site.
@@ -73,14 +74,27 @@ class NegotiationLanguageCookieForm extends ConfigFormBase {
       '#default_value' => $this->config->get('set_on_every_pageload'),
     );
 
-    $form['blacklisted_paths'] = array(
-      '#type' => 'textarea',
-      '#title' => t('Paths blacklist'),
-      '#default_value' => implode(PHP_EOL, (array) $this->config->get('blacklisted_paths')),
-      '#size' => 10,
-      '#description' => t('Specify on which paths the language selection pages should be circumvented.') . '<br />'
-      . t("Specify pages by using their aliased paths. Enter one path per line. The '*' character is a wildcard."),
-    );
+    $manager = \Drupal::service('plugin.manager.language_cookie_condition');
+
+    foreach ($manager->getDefinitions() as $def) {
+      /** @var LanguageCookieConditionInterface $condition_plugin */
+      $condition_plugin = $manager->createInstance($def['id']);
+      $form_state->set(['conditions', $condition_plugin->getPluginId()], $condition_plugin);
+
+      $condition_plugin->setConfiguration($condition_plugin->getConfiguration() + (array) $this->config->get());
+
+      $condition_form = [];
+      $condition_form['#markup'] = $condition_plugin->getDescription();
+      $condition_form += $condition_plugin->buildConfigurationForm([], $form_state);
+
+      if (!empty($condition_form[$condition_plugin->getPluginId()])) {
+        $condition_form['#type'] = 'details';
+        $condition_form['#open'] = TRUE;
+        $condition_form['#title'] = $condition_plugin->getName();
+        $condition_form['#weight'] = $condition_plugin->getWeight();
+        $form['conditions'][$condition_plugin->getPluginId()] = $condition_form;
+      }
+    }
 
     return parent::buildForm($form, $form_state);
   }
