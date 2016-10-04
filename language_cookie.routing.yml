@@ -1,7 +1,14 @@
-language.negotiation_cookie:
+language_cookie.negotiation_cookie:
   path: '/admin/config/regional/language/detection/language_cookie'
   defaults:
     _form: 'Drupal\language_cookie\Form\NegotiationLanguageCookieForm'
-    _title: 'Language cookie detection configuration'
+    _title: 'Cookie language detection configuration'
+  requirements:
+    _permission: 'administer languages'
+
+language_cookie.negotiation_cookie_legacy_redirect:
+  path: '/admin/config/regional/language/configure/language_cookie'
+  defaults:
+    _controller: 'Drupal\language_cookie\Controller\LegacyRedirect::doRedirect'
   requirements:
     _permission: 'administer languages'

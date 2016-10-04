@@ -22,7 +22,7 @@ class NegotiationLanguageCookieForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'language_negotiation_configure_language_cookie_form';
+    return 'language_cookie_admin_form';
   }
 
   /**
@@ -36,7 +36,6 @@ class NegotiationLanguageCookieForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form = parent::buildForm($form, $form_state);
     $this->config = $this->config('language_cookie.negotiation');
 
     $form['param'] = array(
@@ -80,10 +79,10 @@ class NegotiationLanguageCookieForm extends ConfigFormBase {
       '#default_value' => implode(PHP_EOL, (array) $this->config->get('blacklisted_paths')),
       '#size' => 10,
       '#description' => t('Specify on which paths the language selection pages should be circumvented.') . '<br />'
-        . t("Specify pages by using their aliased paths. Enter one path per line. The '*' character is a wildcard."),
+      . t("Specify pages by using their aliased paths. Enter one path per line. The '*' character is a wildcard."),
     );
 
-    return $form;
+    return parent::buildForm($form, $form_state);
   }
 
   /**
@@ -109,6 +108,11 @@ class NegotiationLanguageCookieForm extends ConfigFormBase {
       ->set('set_on_every_pageload', $form_state->getValue('set_on_every_pageload'))
       ->set('blacklisted_paths', $form_state->getValue('blacklisted_paths'))
       ->save();
+
+    // Redirect to the language negotiation page on submit (previous Drupal 7
+    // behavior, and intended behavior for other language negotiation settings
+    // forms in Drupal 8 core).
+    $form_state->setRedirect('language.negotiation');
   }
 
 }
