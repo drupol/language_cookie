@@ -33,7 +33,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
    *
    * @return array|bool
    */
-  public function _get_language() {
+  private function getLanguage() {
     $methods = $this->languageNegotiator->getNegotiationMethods(LanguageInterface::TYPE_INTERFACE);
     uasort($methods, 'Drupal\Component\Utility\SortArray::sortByWeightElement');
 
@@ -54,7 +54,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
    *
    * @param \Symfony\Component\HttpKernel\Event\FilterResponseEvent $event
    */
-  public function language_cookie_set(FilterResponseEvent $event) {
+  public function setLanguageCookie(FilterResponseEvent $event) {
     $this->event = $event;
     $this->languageNegotiator = \Drupal::getContainer()->get('language_negotiator');
     $request = $event->getRequest();
@@ -68,7 +68,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    if ($lang = $this->_get_language()) {
+    if ($lang = $this->getLanguage()) {
       $config = \Drupal::config('language_cookie.negotiation');
       $param = $config->get('param');
 
@@ -83,8 +83,8 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  static function getSubscribedEvents() {
-    $events[KernelEvents::RESPONSE][] = array('language_cookie_set', 20);
+  public static function getSubscribedEvents() {
+    $events[KernelEvents::RESPONSE][] = array('setLanguageCookie', 20);
     return $events;
   }
 }

@@ -2,6 +2,8 @@
 
 namespace Drupal\language_cookie\Plugin\LanguageNegotiation;
 
+use Drupal\Core\Annotation\Translation;
+use Drupal\language\Annotation\LanguageNegotiation;
 use Drupal\language\LanguageNegotiationMethodBase;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -32,8 +34,7 @@ class LanguageNegotiationCookie extends LanguageNegotiationMethodBase {
 
     $param = $config->get('param');
 
-    return (isset($_COOKIE[$param]) && in_array($_COOKIE[$param], array_keys($languages)))
-      ? $_COOKIE[$param] : FALSE;
+    return (\Drupal::request()->cookies->has($param) && in_array(\Drupal::request()->cookies->get($param), array_keys($languages)))
+      ? \Drupal::request()->cookies->get($param) : FALSE;
   }
-
 }
