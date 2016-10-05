@@ -11,18 +11,19 @@ use Drupal\language_cookie\LanguageCookieConditionBase;
 use Drupal\language_cookie\LanguageCookieConditionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal\Core\StreamWrapper\PublicStream;
 
 /**
- * Class for the Blacklisted paths condition plugin.
+ * Class for the Hardcoded blacklisted paths condition plugin.
  *
  * @LanguageCookieCondition(
- *   id = "blacklisted_paths",
+ *   id = "hardcoded_blacklisted_paths",
  *   weight = -50,
- *   name = @Translation("Blacklisted paths"),
- *   description = @Translation("Ignore paths that are blacklisted.")
+ *   name = @Translation("Hardcoded blacklisted paths"),
+ *   description = @Translation("Ignore paths that are in the hardcoded blacklist.")
  * )
  */
-class LanguageCookieConditionBlacklistedPaths extends LanguageCookieConditionBase implements LanguageCookieConditionInterface {
+class LanguageCookieConditionHardcodedBlacklistedPaths extends LanguageCookieConditionBase implements LanguageCookieConditionInterface {
 
   /**
    * An alias manager to find the alias for the current system path.
@@ -96,10 +97,20 @@ class LanguageCookieConditionBlacklistedPaths extends LanguageCookieConditionBas
    * {@inheritdoc}
    */
   public function evaluate() {
-    // Check the path against a list of paths where that the module shouldn't
-    // run on.
-    // This list of path is configurable on the admin page.
-    foreach ((array) $this->configuration[$this->getPluginId()] as $blacklisted_path) {
+    $hardcoded_blacklist = [
+      'cdn/farfuture',
+      'httprl_async_function_callback',
+      // Don't set a cookie if we are accessing anything in the files path.
+      PublicStream::basePath(),
+    ];
+    // Do not set a cookie on the Language Selection Page.
+    // See https://www.drupal.org/project/language_selection_page.
+    $language_selection_page_config = \Drupal::config('language_selection_page.negotiation');
+    if ($language_selection_page_path = $language_selection_page_config->get('path')) {
+      $hardcoded_blacklist[] = $language_selection_page_path;
+    }
+
+    foreach ($hardcoded_blacklist as $blacklisted_path) {
       $request = $this->requestStack->getCurrentRequest();
       // Compare the lowercase path alias (if any) and internal path.
       $path = $this->currentPath->getPath($request);
@@ -115,29 +126,6 @@ class LanguageCookieConditionBlacklistedPaths extends LanguageCookieConditionBas
     }
 
     return $this->pass();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $form[$this->getPluginId()] = [
-      '#type' => 'textarea',
-      '#default_value' => implode(PHP_EOL, (array) $this->configuration[$this->getPluginId()]),
-      '#size' => 10,
-      '#description' => $this->t('Specify on which paths the language cookie should be circumvented.') . '<br />'
-      . $this->t("Specify pages by using their paths. A path must start with <em>/</em>. Enter one path per line. The '*' character is a wildcard. Example paths are %blog for the blog page and %blog-wildcard for every personal blog. %front is the front page.", ['%blog' => '/blog', '%blog-wildcard' => '/blog/*', '%front' => '<front>']),
-    ];
-
-    return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
-    parent::validateConfigurationForm($form, $form_state);
-    $form_state->setValue($this->getPluginId(), array_filter(array_map('trim', explode(PHP_EOL, $form_state->getValue($this->getPluginId())))));
   }
 
 }

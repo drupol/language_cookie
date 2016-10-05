@@ -5,7 +5,6 @@ namespace Drupal\language_cookie\Form;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\language_cookie\LanguageCookieConditionInterface;
 
 /**
  * Configure the Language cookie negotiation method for this site.
@@ -77,7 +76,7 @@ class NegotiationLanguageCookieForm extends ConfigFormBase {
     $manager = \Drupal::service('plugin.manager.language_cookie_condition');
 
     foreach ($manager->getDefinitions() as $def) {
-      /** @var LanguageCookieConditionInterface $condition_plugin */
+      /** @var \Drupal\language_cookie\LanguageCookieConditionInterface $condition_plugin */
       $condition_plugin = $manager->createInstance($def['id']);
       $form_state->set(['conditions', $condition_plugin->getPluginId()], $condition_plugin);
 

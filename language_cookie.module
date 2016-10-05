@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * @file
+ * Language Cookie module.
+ */
+
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\language\Plugin\LanguageNegotiation\LanguageNegotiationUrl;
+use Drupal\language\Plugin\LanguageNegotiation\LanguageNegotiationUrlFallback;
+use Drupal\language_cookie\Plugin\LanguageNegotiation\LanguageNegotiationCookie;
+
+/**
+ * Alters hook_language_types_info().
+ *
+ * For determining the URL language, the cookie language method should take
+ * precedence over the URL fallback method.
+ *
+ * The first method (LanguageNegotiationUrl) attempts to get the
+ * language to use for links in the page from the path prefix or the domain.
+ * If no language is found there, instead of falling back to the
+ * LanguageNegotiationUrlFallback method (which would return the
+ * site default language), we attempt to get the language from the cookie first.
+ *
+ * @see language_language_types_info_alter()
+ * @see https://drupal.org/node/1497272
+ */
+function language_cookie_language_types_info_alter(&$language_types) {
+  $language_types[LanguageInterface::TYPE_URL]['fixed'] = [
+    LanguageNegotiationUrl::METHOD_ID,
+    LanguageNegotiationCookie::METHOD_ID,
+    LanguageNegotiationUrlFallback::METHOD_ID,
+  ];
+}
