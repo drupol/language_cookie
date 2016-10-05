@@ -88,6 +88,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
       }
     }
 
+    // @todo describe why we set this here 
     $this->languageNegotiator = \Drupal::getContainer()->get('language_negotiator');
     $request = $event->getRequest();
 
