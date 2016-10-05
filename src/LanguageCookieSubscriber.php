@@ -22,13 +22,6 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
   protected $event;
 
   /**
-   * The Language Negotiator.
-   *
-   * @var \Drupal\language\LanguageNegotiatorInterface
-   */
-  protected $languageNegotiator;
-
-  /**
    * Helper method that gets the language code to set the cookie to.
    *
    * @see \Drupal\language_cookie\LanguageCookieSubscriber::setLanguageCookie()
@@ -37,6 +30,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
    *   An string with the language code or FALSE.
    */
   protected function getLanguage() {
+    $languageNegotiator = \Drupal::getContainer()->get('language_negotiator');
     $config = \Drupal::config('language_cookie.negotiation');
     // In the install hook for this module, we assume the interface language
     // will be used to set the cookie. If you want to use another language
@@ -44,7 +38,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
     // config key.
     $type = $config->get('language_type');
     // Get all methods available for this language type.
-    $methods = $this->languageNegotiator->getNegotiationMethods($type);
+    $methods = $languageNegotiator->getNegotiationMethods($type);
     // @todo document why we ignore this
     unset($methods[LanguageNegotiationSelected::METHOD_ID]);
     uasort($methods, 'Drupal\Component\Utility\SortArray::sortByWeightElement');
@@ -55,7 +49,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
       if ($method_id == LanguageNegotiationCookie::METHOD_ID) {
         return FALSE;
       }
-      $lang = $this->languageNegotiator->getNegotiationMethodInstance($method_id)->getLangcode($this->event->getRequest());
+      $lang = $languageNegotiator->getNegotiationMethodInstance($method_id)->getLangcode($this->event->getRequest());
       if ($lang) {
         return $lang;
       }
@@ -88,12 +82,10 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
       }
     }
 
-    // @todo describe why we set this here 
-    $this->languageNegotiator = \Drupal::getContainer()->get('language_negotiator');
-    $request = $event->getRequest();
-
     // Get current language to set the cookie to.
     if ($lang = $this->getLanguage()) {
+      $request = $this->event->getRequest();
+
       // Get the name of the cookie parameter.
       $param = $config->get('param');
 
