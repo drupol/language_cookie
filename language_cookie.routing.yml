@@ -6,9 +6,9 @@ language_cookie.negotiation_cookie:
   requirements:
     _permission: 'administer languages'
 
-language_cookie.negotiation_cookie_legacy_redirect:
+language_cookie.negotiation_cookie_legacy_d7_redirect:
   path: '/admin/config/regional/language/configure/language_cookie'
   defaults:
-    _controller: 'Drupal\language_cookie\Controller\LegacyRedirect::doRedirect'
+    _controller: 'Drupal\language_cookie\Controller\LegacyDrupal7Redirect::doRedirect'
   requirements:
     _permission: 'administer languages'

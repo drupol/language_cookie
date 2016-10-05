@@ -1,11 +1,20 @@
 <?php
 
 /**
+ * @file
+ * The install and update code for the language_cookie module.
+ *
+ * @ingroup language_cookie
+ */
+
+use Drupal\Core\Language\LanguageInterface;
+
+/**
  * Implements hook_install().
  */
 function language_cookie_install() {
   $config = \Drupal::config('language_cookie.negotiation');
   // Set up preferred language negotiation type to fetch the language from
   // (the interface language, in our case).
-  $config->set('language_type', \Drupal\Core\Language\LanguageInterface::TYPE_INTERFACE);
+  $config->set('language_type', LanguageInterface::TYPE_INTERFACE);
 }

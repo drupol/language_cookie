@@ -4,3 +4,4 @@ path: '/'
 domain: ''
 set_on_every_pageload: FALSE
 blacklisted_paths:
+language_type:

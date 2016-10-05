@@ -9,7 +9,7 @@ use Drupal\Core\Url;
 /**
  * Controller for legacy route (Drupal 7 path to Drupal 8 path).
  */
-class LegacyRedirect extends ControllerBase {
+class LegacyDrupal7Redirect extends ControllerBase {
 
   /**
    * Callback for the language_cookie.negotiation_cookie_legacy_redirect route.

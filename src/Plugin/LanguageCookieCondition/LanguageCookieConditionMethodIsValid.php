@@ -7,6 +7,7 @@ use Drupal\language\LanguageNegotiatorInterface;
 use Drupal\language_cookie\LanguageCookieConditionBase;
 use Drupal\language_cookie\LanguageCookieConditionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\language_cookie\Plugin\LanguageNegotiation\LanguageNegotiationCookie;
 
 /**
  * Class for LanguageCookieConditionPathIsValid.
@@ -64,7 +65,7 @@ class LanguageCookieConditionMethodIsValid extends LanguageCookieConditionBase i
     $methods = $this->languageNegotiator->getNegotiationMethods(LanguageInterface::TYPE_INTERFACE);
 
     // Do not set cookie if not configured in Language Negotiation.
-    if (!isset($methods['language_cookie'])) {
+    if (!isset($methods[LanguageNegotiationCookie::METHOD_ID])) {
       return $this->block();
     }
 

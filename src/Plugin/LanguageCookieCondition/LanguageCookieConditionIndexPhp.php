@@ -7,16 +7,16 @@ use Drupal\language_cookie\LanguageCookieConditionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class for the Index condition plugin.
+ * Class for the Index.php condition plugin.
  *
  * @LanguageCookieCondition(
  *   id = "index",
  *   weight = -60,
- *   name = @Translation("Index"),
+ *   name = "Index.php",
  *   description = @Translation("Bails out when running the script on another php file than index.php."),
  * )
  */
-class LanguageCookieConditionIndex extends LanguageCookieConditionBase implements LanguageCookieConditionInterface {
+class LanguageCookieConditionIndexPhp extends LanguageCookieConditionBase implements LanguageCookieConditionInterface {
 
   /**
    * {@inheritdoc}

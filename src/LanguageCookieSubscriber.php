@@ -6,7 +6,8 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Drupal\Core\StreamWrapper\PublicStream;
+use Drupal\language\Plugin\LanguageNegotiation\LanguageNegotiationSelected;
+use Drupal\language_cookie\Plugin\LanguageNegotiation\LanguageNegotiationCookie;
 
 /**
  * Provides a LanguageCookieSubscriber.
@@ -44,13 +45,13 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
     $type = $config->get('language_type');
     // Get all methods available for this language type.
     $methods = $this->languageNegotiator->getNegotiationMethods($type);
-    unset($methods['language-selected']);
+    unset($methods[LanguageNegotiationSelected::METHOD_ID]);
     uasort($methods, 'Drupal\Component\Utility\SortArray::sortByWeightElement');
 
     foreach ($methods as $method_id => $method_definition) {
       // Do not consider language providers with a lower priority than the
       // cookie language provider, nor the cookie provider itself.
-      if ($method_id == 'language_cookie') {
+      if ($method_id == LanguageNegotiationCookie::METHOD_ID) {
         return FALSE;
       }
       $lang = $this->languageNegotiator->getNegotiationMethodInstance($method_id)->getLangcode($this->event->getRequest());
@@ -64,7 +65,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Event callback.
+   * Event callback for setting the language cookie.
    *
    * @param \Symfony\Component\HttpKernel\Event\FilterResponseEvent $event
    *   The response event.
@@ -86,36 +87,12 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
       }
     }
 
-    // @todo move these conditions to plugins
-    // Get the current request path.
-    $request_path = $_SERVER["REQUEST_URI"];
-
-    // Don't run this code if we are accessing anything in the files path.
-    $public_files_path = PublicStream::basePath();
-    if (strpos($request_path, $public_files_path) === 0) {
-      return FALSE;
-    }
-
-    if (strpos($request_path, 'cdn/farfuture') === 0) {
-      return FALSE;
-    }
-
-    if (strpos($request_path, 'httprl_async_function_callback') === 0) {
-      return FALSE;
-    }
-
-    // Do not set cookie on language selection page.
-    $language_selection_page_config = \Drupal::config('language_selection_page.negotiation');
-    $language_selection_page_path = $language_selection_page_config->get('path');
-    if ($request_path == $language_selection_page_path) {
-      return FALSE;
-    }
-
     $this->languageNegotiator = \Drupal::getContainer()->get('language_negotiator');
     $request = $event->getRequest();
 
     // Get current language.
     if ($lang = $this->getLanguage()) {
+      // Get the name of the cookie parameter.
       $param = $config->get('param');
 
       if ((!$request->cookies->has($param) || ($request->cookies->get($param) != $lang)) || $config->get('set_on_every_pageload')) {
@@ -133,7 +110,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    // @todo Describe why we are setting this to 20. What does it need to run before or after?
+    // @todo Describe why we are setting the priority to 20. What does it need to run before or after?
     $events[KernelEvents::RESPONSE][] = array('setLanguageCookie', 20);
     return $events;
   }
