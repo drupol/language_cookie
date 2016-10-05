@@ -29,7 +29,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
   protected $languageNegotiator;
 
   /**
-   * Callback helper.
+   * Helper method that gets the language code to set the cookie to.
    *
    * @see \Drupal\language_cookie\LanguageCookieSubscriber::setLanguageCookie()
    *
@@ -45,6 +45,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
     $type = $config->get('language_type');
     // Get all methods available for this language type.
     $methods = $this->languageNegotiator->getNegotiationMethods($type);
+    // @todo document why we ignore this
     unset($methods[LanguageNegotiationSelected::METHOD_ID]);
     uasort($methods, 'Drupal\Component\Utility\SortArray::sortByWeightElement');
 
@@ -90,7 +91,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
     $this->languageNegotiator = \Drupal::getContainer()->get('language_negotiator');
     $request = $event->getRequest();
 
-    // Get current language.
+    // Get current language to set the cookie to.
     if ($lang = $this->getLanguage()) {
       // Get the name of the cookie parameter.
       $param = $config->get('param');
