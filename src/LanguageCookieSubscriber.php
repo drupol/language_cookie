@@ -8,7 +8,6 @@ use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\Core\StreamWrapper\PublicStream;
-use Drupal\Component\Utility\Unicode;
 
 /**
  * Provides a LanguageCookieSubscriber.
@@ -73,16 +72,41 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
       }
     }
 
+    // @todo move these conditions to plugins
+    // Get the current request path.
+    $request_path = $_SERVER["REQUEST_URI"];
+
+    // Don't run this code if we are accessing anything in the files path.
+    $public_files_path = PublicStream::basePath();
+    if (strpos($request_path, $public_files_path) === 0) {
+      return FALSE;
+    }
+
+    if (strpos($request_path, 'cdn/farfuture') === 0) {
+      return FALSE;
+    }
+
+    if (strpos($request_path, 'httprl_async_function_callback') === 0) {
+      return FALSE;
+    }
+
+    // Do not set cookie on language selection page.
+    $language_selection_page_config = \Drupal::config('language_selection_page.negotiation');
+    $language_selection_page_path = $language_selection_page_config->get('path');
+    if ($request_path == $language_selection_page_path) {
+      return FALSE;
+    }
+
     $this->languageNegotiator = \Drupal::getContainer()->get('language_negotiator');
     $request = $event->getRequest();
 
-    // Get current language
+    // Get current language.
     if ($lang = $this->getLanguage()) {
       $param = $config->get('param');
 
       if ((!$request->cookies->has($param) || ($request->cookies->get($param) != $lang)) || $config->get('set_on_every_pageload')) {
         $cookie = new Cookie($param, $lang, REQUEST_TIME + $config->get('time'), $config->get('path'), $config->get('domain'));
-        //Allow other modules to change the $cookie.
+        // Allow other modules to change the $cookie.
         \Drupal::moduleHandler()->alter('language_cookie', $cookie);
         $this->event->getResponse()->headers->setCookie($cookie);
       }
