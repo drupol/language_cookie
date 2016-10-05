@@ -2,7 +2,6 @@
 
 namespace Drupal\language_cookie;
 
-use Drupal\Core\Language\LanguageInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -31,22 +30,37 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
   /**
    * Callback helper.
    *
+   * @see \Drupal\language_cookie\LanguageCookieSubscriber::setLanguageCookie()
+   *
    * @return string|bool
-   *   An string with the language or FALSE.
+   *   An string with the language code or FALSE.
    */
-  private function getLanguage() {
-    $methods = $this->languageNegotiator->getNegotiationMethods(LanguageInterface::TYPE_INTERFACE);
+  protected function getLanguage() {
+    $config = \Drupal::config('language_cookie.negotiation');
+    // In the install hook for this module, we assume the interface language
+    // will be used to set the cookie. If you want to use another language
+    // negotiation type instead (ie. content/URL), you can use "language_type"
+    // config key.
+    $type = $config->get('language_type');
+    // Get all methods available for this language type.
+    $methods = $this->languageNegotiator->getNegotiationMethods($type);
     unset($methods['language-selected']);
     uasort($methods, 'Drupal\Component\Utility\SortArray::sortByWeightElement');
 
     foreach ($methods as $method_id => $method_definition) {
+      // Do not consider language providers with a lower priority than the
+      // cookie language provider, nor the cookie provider itself.
+      if ($method_id == 'language_cookie') {
+        return FALSE;
+      }
       $lang = $this->languageNegotiator->getNegotiationMethodInstance($method_id)->getLangcode($this->event->getRequest());
       if ($lang) {
         return $lang;
       }
     }
 
-    return FALSE;
+    // If no other language was found, use the default one.
+    return \Drupal::languageManager()->getDefaultLanguage()->getId();
   }
 
   /**

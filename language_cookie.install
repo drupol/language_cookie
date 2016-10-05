@@ -1,0 +1,11 @@
+<?php
+
+/**
+ * Implements hook_install().
+ */
+function language_cookie_install() {
+  $config = \Drupal::config('language_cookie.negotiation');
+  // Set up preferred language negotiation type to fetch the language from
+  // (the interface language, in our case).
+  $config->set('language_type', \Drupal\Core\Language\LanguageInterface::TYPE_INTERFACE);
+}
