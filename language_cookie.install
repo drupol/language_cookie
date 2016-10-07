@@ -19,3 +19,19 @@ function language_cookie_install() {
     ->set('language_type', LanguageInterface::TYPE_INTERFACE)
     ->save();
 }
+
+/**
+ * Implements hook_uninstall().
+ */
+function language_cookie_uninstall() {
+  $language_types = !empty($type) ? array($type) : \Drupal::languageManager()->getLanguageTypes();
+
+  foreach($language_types as $type) {
+    $enabled_methods = \Drupal::configFactory()->get('language.types')->get('negotiation.' . $type . '.enabled') ?: array();
+    if (isset($enabled_methods['language_cookie'])) {
+      unset($enabled_methods['language_cookie']);
+
+      \Drupal::configFactory()->getEditable('language.types')->set('negotiation.' . $type . '.enabled', $enabled_methods)->save();
+    }
+  }
+}
