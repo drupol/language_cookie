@@ -3,7 +3,6 @@
 namespace Drupal\language_cookie\Plugin\LanguageCookieCondition;
 
 use Drupal\Component\Utility\Unicode;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Path\CurrentPathStack;
 use Drupal\Core\Path\PathMatcherInterface;
