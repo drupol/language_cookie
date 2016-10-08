@@ -30,6 +30,8 @@ class LanguageCookieConditionMethodIsValid extends LanguageCookieConditionBase i
   protected $languageNegotiator;
 
   /**
+   * The current user.
+   *
    * @var \Drupal\Core\Session\AccountInterface
    */
   protected $currentUser;
@@ -39,7 +41,7 @@ class LanguageCookieConditionMethodIsValid extends LanguageCookieConditionBase i
    *
    * @param LanguageNegotiatorInterface $language_negotiator
    *   The language negotiator.
-   * @param AccountInterface $current_user
+   * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.

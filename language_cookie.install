@@ -24,7 +24,7 @@ function language_cookie_install() {
  * Implements hook_uninstall().
  */
 function language_cookie_uninstall() {
-  $language_types = !empty($type) ? array($type) : \Drupal::languageManager()->getLanguageTypes();
+  $language_types = \Drupal::languageManager()->getLanguageTypes();
 
   foreach ($language_types as $type) {
     $enabled_methods = \Drupal::configFactory()->get('language.types')->get('negotiation.' . $type . '.enabled') ?: array();
