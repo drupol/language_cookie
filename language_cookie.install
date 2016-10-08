@@ -8,6 +8,7 @@
  */
 
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\language_cookie\Plugin\LanguageNegotiation\LanguageNegotiationCookie;
 
 /**
  * Implements hook_install().
@@ -28,8 +29,8 @@ function language_cookie_uninstall() {
 
   foreach ($language_types as $type) {
     $enabled_methods = \Drupal::configFactory()->get('language.types')->get('negotiation.' . $type . '.enabled') ?: array();
-    if (isset($enabled_methods['language_cookie'])) {
-      unset($enabled_methods['language_cookie']);
+    if (isset($enabled_methods[LanguageNegotiationCookie::METHOD_ID])) {
+      unset($enabled_methods[LanguageNegotiationCookie::METHOD_ID]);
 
       \Drupal::configFactory()->getEditable('language.types')->set('negotiation.' . $type . '.enabled', $enabled_methods)->save();
     }
