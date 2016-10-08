@@ -3,6 +3,7 @@
 namespace Drupal\language_cookie\Plugin\LanguageCookieCondition;
 
 use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Path\CurrentPathStack;
 use Drupal\Core\Path\PathMatcherInterface;
@@ -53,6 +54,13 @@ class LanguageCookieConditionHardcodedBlacklistedPaths extends LanguageCookieCon
   protected $currentPath;
 
   /**
+   * The configuration factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * Constructs a RequestPath condition plugin.
    *
    * @param \Drupal\Core\Path\AliasManagerInterface $alias_manager
@@ -63,6 +71,8 @@ class LanguageCookieConditionHardcodedBlacklistedPaths extends LanguageCookieCon
    *   The request stack.
    * @param \Drupal\Core\Path\CurrentPathStack $current_path
    *   The current path.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
@@ -70,12 +80,13 @@ class LanguageCookieConditionHardcodedBlacklistedPaths extends LanguageCookieCon
    * @param array $plugin_definition
    *   The plugin implementation definition.
    */
-  public function __construct(AliasManagerInterface $alias_manager, PathMatcherInterface $path_matcher, RequestStack $request_stack, CurrentPathStack $current_path, array $configuration, $plugin_id, array $plugin_definition) {
+  public function __construct(AliasManagerInterface $alias_manager, PathMatcherInterface $path_matcher, RequestStack $request_stack, CurrentPathStack $current_path, ConfigFactoryInterface $config_factory, array $configuration, $plugin_id, array $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->aliasManager = $alias_manager;
     $this->pathMatcher = $path_matcher;
     $this->requestStack = $request_stack;
     $this->currentPath = $current_path;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -87,6 +98,7 @@ class LanguageCookieConditionHardcodedBlacklistedPaths extends LanguageCookieCon
       $container->get('path.matcher'),
       $container->get('request_stack'),
       $container->get('path.current'),
+      $container->get('config.factory'),
       $configuration,
       $plugin_id,
       $plugin_definition);
@@ -104,7 +116,7 @@ class LanguageCookieConditionHardcodedBlacklistedPaths extends LanguageCookieCon
     ];
     // Do not set a cookie on the Language Selection Page.
     // See https://www.drupal.org/project/language_selection_page.
-    $language_selection_page_config = \Drupal::config('language_selection_page.negotiation');
+    $language_selection_page_config = $this->configFactory->get('language_selection_page.negotiation');
     if ($language_selection_page_path = $language_selection_page_config->get('path')) {
       $hardcoded_blacklist[] = $language_selection_page_path;
     }
