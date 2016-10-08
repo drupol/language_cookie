@@ -1,7 +1,13 @@
 <?php
 
-namespace Drupal\language_cookie;
+namespace Drupal\language_cookie\EventSubscriber;
 
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Executable\ExecutableInterface;
+use Drupal\Core\Executable\ExecutableManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\language\LanguageNegotiatorInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -22,6 +28,63 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
   protected $event;
 
   /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
+   * The configuration factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * The language negotiator.
+   *
+   * @var \Drupal\language\LanguageNegotiatorInterface
+   */
+  protected $languageNegotiator;
+
+  /**
+   * The Language Cookie condition plugin manager.
+   *
+   * @var \Drupal\Core\Executable\ExecutableManagerInterface $plugin_manager
+   */
+  protected $languageCookieConditionManager;
+
+  /**
+   * The module handler.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * Constructs a new class object.
+   *
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
+   * @param \Drupal\language\LanguageNegotiatorInterface $language_negotiator
+   *   The language negotiator.
+   * @param \Drupal\Core\Executable\ExecutableManagerInterface $plugin_manager
+   *   The language cookie condition plugin manager
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   */
+  public function __construct(LanguageManagerInterface $language_manager, ConfigFactoryInterface $config_factory, LanguageNegotiatorInterface $language_negotiator, ExecutableManagerInterface $plugin_manager, ModuleHandlerInterface $module_handler) {
+    $this->languageManager = $language_manager;
+    $this->configFactory = $config_factory;
+    $this->languageNegotiator = $language_negotiator;
+    $this->languageCookieConditionManager = $plugin_manager;
+    $this->moduleHandler = $module_handler;
+  }
+
+  /**
    * Helper method that gets the language code to set the cookie to.
    *
    * @see \Drupal\language_cookie\LanguageCookieSubscriber::setLanguageCookie()
@@ -30,15 +93,14 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
    *   An string with the language code or FALSE.
    */
   protected function getLanguage() {
-    $languageNegotiator = \Drupal::getContainer()->get('language_negotiator');
-    $config = \Drupal::config('language_cookie.negotiation');
+    $config = $this->configFactory->get('language_cookie.negotiation');
     // In the install hook for this module, we assume the interface language
     // will be used to set the cookie. If you want to use another language
     // negotiation type instead (ie. content/URL), you can use "language_type"
     // config key.
     $type = $config->get('language_type');
     // Get all methods available for this language type.
-    $methods = $languageNegotiator->getNegotiationMethods($type);
+    $methods = $this->languageNegotiator->getNegotiationMethods($type);
     // @todo document why we ignore this
     unset($methods[LanguageNegotiationSelected::METHOD_ID]);
     uasort($methods, 'Drupal\Component\Utility\SortArray::sortByWeightElement');
@@ -49,14 +111,14 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
       if ($method_id == LanguageNegotiationCookie::METHOD_ID) {
         return FALSE;
       }
-      $lang = $languageNegotiator->getNegotiationMethodInstance($method_id)->getLangcode($this->event->getRequest());
+      $lang = $this->languageNegotiator->getNegotiationMethodInstance($method_id)->getLangcode($this->event->getRequest());
       if ($lang) {
         return $lang;
       }
     }
 
     // If no other language was found, use the default one.
-    return \Drupal::languageManager()->getDefaultLanguage()->getId();
+    return $this->languageManager->getDefaultLanguage()->getId();
   }
 
   /**
@@ -70,12 +132,12 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
    */
   public function setLanguageCookie(FilterResponseEvent $event) {
     $this->event = $event;
-    $config = \Drupal::config('language_cookie.negotiation');
+    $config = $this->configFactory->get('language_cookie.negotiation');
 
-    /** @var LanguageCookieConditionManager $manager */
-    $manager = \Drupal::service('plugin.manager.language_cookie_condition');
+    $manager = $this->languageCookieConditionManager;
 
     foreach ($manager->getDefinitions() as $def) {
+      /** @var ExecutableInterface $condition_plugin */
       $condition_plugin = $manager->createInstance($def['id'], $config->get());
       if (!$manager->execute($condition_plugin)) {
         return FALSE;
@@ -92,7 +154,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
       if ((!$request->cookies->has($param) || ($request->cookies->get($param) != $lang)) || $config->get('set_on_every_pageload')) {
         $cookie = new Cookie($param, $lang, REQUEST_TIME + $config->get('time'), $config->get('path'), $config->get('domain'));
         // Allow other modules to change the $cookie.
-        \Drupal::moduleHandler()->alter('language_cookie', $cookie);
+        $this->moduleHandler->alter('language_cookie', $cookie);
         $this->event->getResponse()->headers->setCookie($cookie);
       }
     }
