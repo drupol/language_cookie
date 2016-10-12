@@ -3,6 +3,7 @@
 namespace Drupal\language_cookie\Plugin\LanguageCookieCondition;
 
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\language\LanguageNegotiatorInterface;
 use Drupal\language_cookie\LanguageCookieConditionBase;
 use Drupal\language_cookie\LanguageCookieConditionInterface;
@@ -29,10 +30,19 @@ class LanguageCookieConditionMethodIsValid extends LanguageCookieConditionBase i
   protected $languageNegotiator;
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
    * Constructs a LanguageCookieConditionPath plugin.
    *
    * @param LanguageNegotiatorInterface $language_negotiator
    *   The language negotiator.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
@@ -40,9 +50,10 @@ class LanguageCookieConditionMethodIsValid extends LanguageCookieConditionBase i
    * @param array $plugin_definition
    *   The plugin implementation definition.
    */
-  public function __construct(LanguageNegotiatorInterface $language_negotiator, array $configuration, $plugin_id, array $plugin_definition) {
+  public function __construct(LanguageNegotiatorInterface $language_negotiator, AccountInterface $current_user, $configuration, $plugin_id, array $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->languageNegotiator = $language_negotiator;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -51,6 +62,7 @@ class LanguageCookieConditionMethodIsValid extends LanguageCookieConditionBase i
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
       $container->get('language_negotiator'),
+      $container->get('current_user'),
       $configuration,
       $plugin_id,
       $plugin_definition);
@@ -60,8 +72,8 @@ class LanguageCookieConditionMethodIsValid extends LanguageCookieConditionBase i
    * {@inheritdoc}
    */
   public function evaluate() {
-    $user = \Drupal::currentUser();
-    $this->languageNegotiator->setCurrentUser($user->getAccount());
+    $user = $this->currentUser;
+    $this->languageNegotiator->setCurrentUser($user);
     $methods = $this->languageNegotiator->getNegotiationMethods(LanguageInterface::TYPE_INTERFACE);
 
     // Do not set cookie if not configured in Language Negotiation.

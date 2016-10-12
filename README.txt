@@ -51,5 +51,3 @@ COMPATIBILITY
 
 A lot of work has gone into ensuring maximum compatibility with other contrib
 modules. If you find a bug please use the issue tracker for support. Thanks!
-
-

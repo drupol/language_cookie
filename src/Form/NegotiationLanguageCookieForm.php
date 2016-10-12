@@ -2,9 +2,10 @@
 
 namespace Drupal\language_cookie\Form;
 
-use Drupal\Core\Config\Config;
+use Drupal\Core\Executable\ExecutableManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Configure the Language cookie negotiation method for this site.
@@ -14,9 +15,35 @@ class NegotiationLanguageCookieForm extends ConfigFormBase {
   /**
    * The configuration.
    *
-   * @var Config
+   * @var \Drupal\Core\Config\Config
    */
   protected $config;
+
+  /**
+   * The Language Cookie condition plugin manager.
+   *
+   * @var \Drupal\Core\Executable\ExecutableManagerInterface
+   */
+  protected $languageCookieConditionManager;
+
+  /**
+   * NegotiationLanguageCookieForm constructor.
+   *
+   * @param \Drupal\Core\Executable\ExecutableManagerInterface $plugin_manager
+   */
+  public function __construct(ExecutableManagerInterface $plugin_manager) {
+    parent::__construct($this->configFactory());
+    $this->languageCookieConditionManager = $plugin_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('plugin.manager.language_cookie_condition')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -73,10 +100,9 @@ class NegotiationLanguageCookieForm extends ConfigFormBase {
       '#default_value' => $this->config->get('set_on_every_pageload'),
     );
 
-    $manager = \Drupal::service('plugin.manager.language_cookie_condition');
+    $manager = $this->languageCookieConditionManager;
 
     foreach ($manager->getDefinitions() as $def) {
-      /** @var \Drupal\language_cookie\LanguageCookieConditionInterface $condition_plugin */
       $condition_plugin = $manager->createInstance($def['id']);
       $form_state->set(['conditions', $condition_plugin->getPluginId()], $condition_plugin);
 
