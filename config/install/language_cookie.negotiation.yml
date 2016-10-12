@@ -3,5 +3,5 @@ time: 31536000
 path: '/'
 domain: ''
 set_on_every_pageload: FALSE
-blacklisted_paths:
+blacklisted_paths: []
 language_type:

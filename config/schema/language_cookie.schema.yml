@@ -6,7 +6,7 @@ language_cookie.negotiation:
       type: string
       label: 'Cookie parameter'
     time:
-      type: string
+      type: integer
       label: 'Cookie duration'
     path:
       type: string
@@ -14,6 +14,9 @@ language_cookie.negotiation:
     domain:
       type: string
       label: 'The cookie domain scope'
+    language_type:
+      type: string
+      label: 'The language type to use (interface/content/url)'
     set_on_every_pageload:
       type: boolean
       label: 'Re-send cookie on every page load'

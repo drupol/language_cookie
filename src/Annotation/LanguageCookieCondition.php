@@ -30,7 +30,7 @@ class LanguageCookieCondition extends Condition {
   public $weight;
 
   /**
-   * The human-readable name of the language negotiation plugin.
+   * The human-readable name of the language cookie condition plugin.
    *
    * @var \Drupal\Core\Annotation\Translation
    *
@@ -39,7 +39,7 @@ class LanguageCookieCondition extends Condition {
   public $name;
 
   /**
-   * The description of the language negotiation plugin.
+   * The description of the language cookie condition plugin.
    *
    * @var \Drupal\Core\Annotation\Translation
    *
