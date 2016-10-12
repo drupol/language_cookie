@@ -3,6 +3,6 @@ services:
     class: Drupal\language_cookie\LanguageCookieConditionManager
     arguments: ['@container.namespaces', '@cache.discovery', '@module_handler']
   language_cookie.language_cookie_subscriber:
-    class: Drupal\language_cookie\LanguageCookieSubscriber
+    class: Drupal\language_cookie\EventSubscriber\LanguageCookieSubscriber
     tags:
       - { name: 'event_subscriber' }

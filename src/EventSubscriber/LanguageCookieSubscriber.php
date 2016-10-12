@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\language_cookie;
+namespace Drupal\language_cookie\EventSubscriber;
 
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
