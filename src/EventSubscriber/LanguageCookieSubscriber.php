@@ -8,12 +8,12 @@ use Drupal\Core\Executable\ExecutableManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\language\LanguageNegotiatorInterface;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Drupal\language\Plugin\LanguageNegotiation\LanguageNegotiationSelected;
 use Drupal\language_cookie\Plugin\LanguageNegotiation\LanguageNegotiationCookie;
-use Symfony\Component\HttpFoundation\Cookie;
 
 /**
  * Provides a LanguageCookieSubscriber.
