@@ -25,10 +25,8 @@ class LanguageNegotiationCookie extends LanguageNegotiationMethodBase implements
 
   /**
    * The language negotiation method ID.
-   *
-   * Uses an underscore instead of a dash as this this what was used in 7.x.
    */
-  const METHOD_ID = 'language_cookie';
+  const METHOD_ID = 'language-cookie';
 
   /**
    * The configuration factory.

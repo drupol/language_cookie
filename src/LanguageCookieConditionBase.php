@@ -37,7 +37,7 @@ abstract class LanguageCookieConditionBase extends ConditionPluginBase implement
    * {@inheritdoc}
    */
   public function summary() {
-    // TODO.
+    // This should return a summary but it's not used in our case.
   }
 
   /**
