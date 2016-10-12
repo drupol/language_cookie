@@ -5,7 +5,6 @@ namespace Drupal\Tests\language_cookie\Functional;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\language_cookie\Plugin\LanguageNegotiation\LanguageNegotiationCookie;
 use Drupal\Core\Language\LanguageInterface;
-use Drupal\file\Entity\File;
 
 /**
  * Tests that the condition plugins work.
@@ -23,7 +22,7 @@ class TestLanguageCookieCondition extends BrowserTestBase {
     'language_cookie',
     'locale',
     'content_translation',
-    'language_test'
+    'language_test',
   ];
 
   /**
@@ -58,14 +57,13 @@ class TestLanguageCookieCondition extends BrowserTestBase {
     $this->drupalPostform('admin/structure/types/manage/page', ['language_configuration[content_translation]' => 1], 'Save content type');
   }
 
-
   /**
    * Test the "Blacklisted paths" condition.
    */
   public function testBlackListedPaths() {
     $node = $this->drupalCreateNode();
 
-    // Remove cookie
+    // Remove cookie.
     $this->getSession()->setCookie('language', NULL);
     $this->drupalGet('node/' . $node->id());
     $last = $this->container->get('state')->get('language_test.language_negotiation_last');
@@ -83,13 +81,13 @@ class TestLanguageCookieCondition extends BrowserTestBase {
     $this->assertEquals($last_interface_language, 'fr');
 
     // Add node to blacklisted paths.
-    $this->drupalPostForm('admin/config/regional/language/detection/language_cookie', ['blacklisted_paths' =>  '/admin/*' . PHP_EOL . '/node/' . $node->id()], 'Save configuration');
+    $this->drupalPostForm('admin/config/regional/language/detection/language_cookie', ['blacklisted_paths' => '/admin/*' . PHP_EOL . '/node/' . $node->id()], 'Save configuration');
     $this->getSession()->setCookie('language', NULL);
     $this->drupalGet('en/node/' . $node->id());
     $this->assertEmpty($this->getSession()->getCookie('language'));
 
     // Add node to blacklisted paths (in the middle).
-    $this->drupalPostForm('admin/config/regional/language/detection/language_cookie', ['blacklisted_paths' => '/admin/*' . PHP_EOL . '/node/' . $node->id() .  PHP_EOL . '/bar'], 'Save configuration');
+    $this->drupalPostForm('admin/config/regional/language/detection/language_cookie', ['blacklisted_paths' => '/admin/*' . PHP_EOL . '/node/' . $node->id() . PHP_EOL . '/bar'], 'Save configuration');
     $this->getSession()->setCookie('language', NULL);
     $this->drupalGet('en/node/' . $node->id());
     $this->assertEmpty($this->getSession()->getCookie('language'));

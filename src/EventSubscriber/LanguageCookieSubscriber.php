@@ -72,7 +72,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
    * @param \Drupal\language\LanguageNegotiatorInterface $language_negotiator
    *   The language negotiator.
    * @param \Drupal\Core\Executable\ExecutableManagerInterface $plugin_manager
-   *   The language cookie condition plugin manager
+   *   The language cookie condition plugin manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    */

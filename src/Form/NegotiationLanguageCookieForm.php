@@ -30,6 +30,7 @@ class NegotiationLanguageCookieForm extends ConfigFormBase {
    * NegotiationLanguageCookieForm constructor.
    *
    * @param \Drupal\Core\Executable\ExecutableManagerInterface $plugin_manager
+   *   The plugin manager.
    */
   public function __construct(ExecutableManagerInterface $plugin_manager) {
     parent::__construct($this->configFactory());
