@@ -80,30 +80,30 @@ class TestLanguageCookieCondition extends BrowserTestBase {
     $this->assertEmpty($this->getSession()->getCookie('language'));
 
     // Add node to blacklisted paths (in the middle).
-    $this->drupalPostForm('admin/config/regional/language/detection/language_selection_page', ['blacklisted_paths' => '/admin/*' . PHP_EOL . '/node/' . $node->id() .  PHP_EOL . '/bar'], 'Save configuration');
+    $this->drupalPostForm('admin/config/regional/language/detection/language_cookie', ['blacklisted_paths' => '/admin/*' . PHP_EOL . '/node/' . $node->id() .  PHP_EOL . '/bar'], 'Save configuration');
     $this->getSession()->setCookie('language', NULL);
     $this->drupalGet('node/' . $node->id());
     $this->assertEmpty($this->getSession()->getCookie('language'));
 
     // Add string that contains node, but not node itself.
-    $this->drupalPostForm('admin/config/regional/language/detection/language_selection_page', ['blacklisted_paths' => '/admin/*' . PHP_EOL . '/node/' . $node->id() . '/foobar' . PHP_EOL . '/bar'], 'Save configuration');
+    $this->drupalPostForm('admin/config/regional/language/detection/language_cookie', ['blacklisted_paths' => '/admin/*' . PHP_EOL . '/node/' . $node->id() . '/foobar' . PHP_EOL . '/bar'], 'Save configuration');
     $this->getSession()->setCookie('language', NULL);
     $this->drupalGet('node/' . $node->id());
     $this->assertEquals($this->getSession()->getCookie('language'), 'en');
 
     // Add string that starts with node, but not node itself.
-    $this->drupalPostForm('admin/config/regional/language/detection/language_selection_page', ['blacklisted_paths' => '/admin/*' . PHP_EOL . '/node/' . $node->id() . '/foobar'], 'Save configuration');
+    $this->drupalPostForm('admin/config/regional/language/detection/language_cookie', ['blacklisted_paths' => '/admin/*' . PHP_EOL . '/node/' . $node->id() . '/foobar'], 'Save configuration');
     $this->getSession()->setCookie('language', NULL);
     $this->drupalGet('node/' . $node->id());
     $this->assertEquals($this->getSession()->getCookie('language'), 'en');
 
     // Test front page.
-    $this->drupalPostForm('admin/config/regional/language/detection/language_selection_page', ['blacklisted_paths' => '/admin/*'], 'Save configuration');
+    $this->drupalPostForm('admin/config/regional/language/detection/language_cookie', ['blacklisted_paths' => '/admin/*'], 'Save configuration');
     $this->getSession()->setCookie('language', NULL);
     $this->drupalGet('<front>');
     $this->assertEquals($this->getSession()->getCookie('language'), 'en');
 
-    $this->drupalPostForm('en/admin/config/regional/language/detection/language_selection_page', ['blacklisted_paths' => '/admin/*' . PHP_EOL . '<front>'], 'Save configuration');
+    $this->drupalPostForm('en/admin/config/regional/language/detection/language_cookie', ['blacklisted_paths' => '/admin/*' . PHP_EOL . '<front>'], 'Save configuration');
     $this->getSession()->setCookie('language', NULL);
     $this->drupalGet('<front>');
     $this->assertEmpty($this->getSession()->getCookie('language'));
