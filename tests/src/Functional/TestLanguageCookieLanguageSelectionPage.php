@@ -88,7 +88,7 @@ class TestLanguageCookieLanguageSelectionPage extends BrowserTestBase {
     // Cookie should not yet be set.
     $this->assertEmpty($this->getSession()->getCookie('language'));
     $this->clickLink('English');
-    // Cookie should be set at this point. 
+    // Cookie should be set at this point.
     $this->assertEquals($this->getSession()->getCookie('language'), 'en');
   }
 

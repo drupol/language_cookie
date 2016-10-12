@@ -105,6 +105,7 @@ class LanguageCookieConditionBlacklistedPaths extends LanguageCookieConditionBas
       $path = $this->currentPath->getPath($request);
       // Do not trim a trailing slash if that is the complete path.
       $path = $path === '/' ? $path : rtrim($path, '/');
+      // @todo get the right alias for the current language (pass along langcode), or alternatively, store the system path only, so we don't have to compare against aliases. 
       $path_alias = Unicode::strtolower($this->aliasManager->getAliasByPath($path));
 
       $is_on_blacklisted_path = $this->pathMatcher->matchPath($path_alias, $blacklisted_path) || (($path != $path_alias) && $this->pathMatcher->matchPath($path, $blacklisted_path));

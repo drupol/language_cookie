@@ -109,16 +109,15 @@ class LanguageCookieConditionHardcodedBlacklistedPaths extends LanguageCookieCon
    */
   public function evaluate() {
     $hardcoded_blacklist = [
-      'cdn/farfuture',
-      'httprl_async_function_callback',
-      // Don't set a cookie if we are accessing anything in the files path.
-      PublicStream::basePath(),
+      '/cdn/farfuture',
+      '/httprl_async_function_callback',
+      '/' . PublicStream::basePath() . '*',
     ];
     // Do not set a cookie on the Language Selection Page.
     // See https://www.drupal.org/project/language_selection_page.
     $language_selection_page_config = $this->configFactory->get('language_selection_page.negotiation');
     if ($language_selection_page_path = $language_selection_page_config->get('path')) {
-      $hardcoded_blacklist[] = $language_selection_page_path;
+      $hardcoded_blacklist[] = '/' . $language_selection_page_path;
     }
 
     foreach ($hardcoded_blacklist as $blacklisted_path) {
