@@ -1,0 +1,24 @@
+language_cookie.negotiation:
+  type: config_object
+  label: 'Language cookie settings'
+  mapping:
+    param:
+      type: string
+      label: 'Cookie parameter'
+    time:
+      type: string
+      label: 'Cookie duration'
+    path:
+      type: string
+      label: 'The cookie available server path'
+    domain:
+      type: string
+      label: 'The cookie domain scope'
+    set_on_every_pageload:
+      type: boolean
+      label: 'Re-send cookie on every page load'
+    blacklisted_paths:
+      type: sequence
+      label: 'Blacklisted paths'
+      sequence:
+        type: string
