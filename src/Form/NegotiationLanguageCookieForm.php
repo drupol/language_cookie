@@ -67,37 +67,37 @@ class NegotiationLanguageCookieForm extends ConfigFormBase {
     $this->config = $this->config('language_cookie.negotiation');
 
     $form['param'] = array(
-      '#title' => t('Cookie parameter'),
+      '#title' => $this->t('Cookie parameter'),
       '#type' => 'textfield',
       '#default_value' => $this->config->get('param'),
       '#description' => $this->t('Name of the cookie parameter used to determine the desired language.'),
     );
 
     $form['time'] = array(
-      '#title' => t('Cookie duration'),
+      '#title' => $this->t('Cookie duration'),
       '#type' => 'textfield',
       '#default_value' => $this->config->get('time'),
       '#description' => $this->t('The time the cookie expires. This is the number of seconds from the current time.'),
     );
 
     $form['path'] = array(
-      '#title' => t('Cookie path'),
+      '#title' => $this->t('Cookie path'),
       '#type' => 'textfield',
       '#default_value' => $this->config->get('path'),
-      '#description' => t('The cookie available server path'),
+      '#description' => $this->t('The cookie available server path'),
     );
 
     $form['domain'] = array(
-      '#title' => t('Cookie domain scope'),
+      '#title' => $this->t('Cookie domain scope'),
       '#type' => 'textfield',
       '#default_value' => $this->config->get('domain'),
-      '#description' => t('The cookie domain scope'),
+      '#description' => $this->t('The cookie domain scope'),
     );
 
     $form['set_on_every_pageload'] = array(
-      '#title' => t('Re-send cookie on every page load'),
+      '#title' => $this->t('Re-send cookie on every page load'),
       '#type' => 'checkbox',
-      '#description' => t('This will re-send a cookie on every page load, even if a cookie has already been set. This may be useful if you use a page cache such as Varnish and you plan to cache the language cookie. This prevents a user who already has a cookie visiting an uncached page and the cached version not setting a cookie.'),
+      '#description' => $this->t('This will re-send a cookie on every page load, even if a cookie has already been set. This may be useful if you use a page cache such as Varnish and you plan to cache the language cookie. This prevents a user who already has a cookie visiting an uncached page and the cached version not setting a cookie.'),
       '#default_value' => $this->config->get('set_on_every_pageload'),
     );
 

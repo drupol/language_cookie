@@ -11,7 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Class for identifying language from a language cookie.
  *
- * @todo explain why weight is -5 (or -4)
+ * The recommended order is URL > Cookie > Language Selection Page, so weight
+ * is set to -5 by default so that it is lower than Language Selection Page
+ * (see https://www.drupal.org/project/language_selection_page), which has a
+ * weight of -4, and so that it higher than URL, which has a weight of -8.
  *
  * @LanguageNegotiation(
  *   weight = -5,
