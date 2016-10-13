@@ -72,7 +72,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
    * @param \Drupal\language\LanguageNegotiatorInterface $language_negotiator
    *   The language negotiator.
    * @param \Drupal\Core\Executable\ExecutableManagerInterface $plugin_manager
-   *   The language cookie condition plugin manager
+   *   The language cookie condition plugin manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    */
@@ -101,7 +101,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
     $type = $config->get('language_type');
     // Get all methods available for this language type.
     $methods = $this->languageNegotiator->getNegotiationMethods($type);
-    // @todo document why we ignore this
+    // We ignore this language method or else it will always return a language.
     unset($methods[LanguageNegotiationSelected::METHOD_ID]);
     uasort($methods, 'Drupal\Component\Utility\SortArray::sortByWeightElement');
 

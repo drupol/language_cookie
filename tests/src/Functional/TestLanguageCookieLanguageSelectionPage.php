@@ -70,7 +70,7 @@ class TestLanguageCookieLanguageSelectionPage extends BrowserTestBase {
     $this->drupalGet('node/' . $node->id());
     $this->assertLanguageSelectionPageLoaded();
 
-    // Enable cookie
+    // Enable cookie.
     $this->drupalPostForm('admin/config/regional/language/detection', [
       'language_interface[enabled][language-url]' => 1,
       'language_interface[enabled][' . LanguageNegotiationCookie::METHOD_ID . ']' => 1,
@@ -80,7 +80,7 @@ class TestLanguageCookieLanguageSelectionPage extends BrowserTestBase {
       'language_interface[weight][language-selection-page]' => -4,
     ], 'Save settings');
     $this->assertEquals($this->getSession()->getCookie('language'), 'en');
-    // Remove cookie
+    // Remove cookie.
     $this->getSession()->setCookie('language', NULL);
     $this->drupalGet('node/' . $node->id());
     $this->assertLanguageSelectionPageLoaded();
@@ -88,7 +88,7 @@ class TestLanguageCookieLanguageSelectionPage extends BrowserTestBase {
     // Cookie should not yet be set.
     $this->assertEmpty($this->getSession()->getCookie('language'));
     $this->clickLink('English');
-    // Cookie should be set at this point. 
+    // Cookie should be set at this point.
     $this->assertEquals($this->getSession()->getCookie('language'), 'en');
   }
 
@@ -105,4 +105,5 @@ class TestLanguageCookieLanguageSelectionPage extends BrowserTestBase {
   protected function assertLanguageSelectionPageNotLoaded() {
     $this->assertSession()->pageTextNotContains(self::LANGUAGE_SELECTION_PAGE_TEXT);
   }
+ 
 }
