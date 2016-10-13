@@ -87,6 +87,9 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
   /**
    * Helper method that gets the language code to set the cookie to.
    *
+   * Loops through all available language negotiation methods with higher
+   * priority than the Language Cookie method itself.
+   *
    * @see \Drupal\language_cookie\LanguageCookieSubscriber::setLanguageCookie()
    *
    * @return string|bool
@@ -128,7 +131,9 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
    *   The response event.
    *
    * @return bool
-   *   True or False.
+   *   - FALSE if a condition plugin prevented the cookie from being set.
+   *   - TRUE if all conditions pass. If a language is available, the cookie
+   *     will have been set.
    */
   public function setLanguageCookie(FilterResponseEvent $event) {
     $this->event = $event;
@@ -136,6 +141,8 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
 
     $manager = $this->languageCookieConditionManager;
 
+    // Run through the condition plugins that may prevent a cookie from being
+    // set.
     foreach ($manager->getDefinitions() as $def) {
       /** @var ExecutableInterface $condition_plugin */
       $condition_plugin = $manager->createInstance($def['id'], $config->get());
@@ -144,7 +151,9 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
       }
     }
 
-    // Get current language to set the cookie to.
+    // Get the current language to set in the cookie to by running through all
+    // language negotiation methods with higher priority (in terms of weight)
+    // than the Language Cookie method.
     if ($lang = $this->getLanguage()) {
       $request = $this->event->getRequest();
 
@@ -166,7 +175,11 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    // @todo Describe why we are setting the priority to 20. What does it need to run before or after?
+    // You can set the order of execution of this event callback in the array.
+    // Find the order of execution by doing this in the Drupal Root:
+    // grep "$events[KernelEvents::RESPONSE][]" . -R | grep -v 'Test'
+    // The value is currently set to 20, feel free to adjust if needed.
+    // @todo explain why it's 20? just a random number?
     $events[KernelEvents::RESPONSE][] = array('setLanguageCookie', 20);
     return $events;
   }
