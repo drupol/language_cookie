@@ -127,7 +127,12 @@ class LanguageCookieConditionBlacklistedPaths extends LanguageCookieConditionBas
       '#default_value' => implode(PHP_EOL, (array) $this->configuration[$this->getPluginId()]),
       '#size' => 10,
       '#description' => $this->t('Specify on which paths the language cookie should be circumvented.') . '<br />'
-      . $this->t("Specify pages by using their paths. A path must start with <em>/</em>. Enter one path per line. The '*' character is a wildcard. Example paths are %blog for the blog page and %blog-wildcard for every personal blog. %front is the front page.", ['%blog' => '/blog', '%blog-wildcard' => '/blog/*', '%front' => '<front>']),
+      . $this->t("Specify pages by using their paths. A path must start with <em>/</em>. Enter one path per line. The '*' character is a wildcard. Example paths are %blog for the blog page and %blog-wildcard for every personal blog. %front is the front page.",
+          [
+            '%blog' => '/blog',
+            '%blog-wildcard' => '/blog/*',
+            '%front' => '<front>',
+          ]),
     ];
 
     return $form;

@@ -105,5 +105,5 @@ class TestLanguageCookieLanguageSelectionPage extends BrowserTestBase {
   protected function assertLanguageSelectionPageNotLoaded() {
     $this->assertSession()->pageTextNotContains(self::LANGUAGE_SELECTION_PAGE_TEXT);
   }
- 
+
 }

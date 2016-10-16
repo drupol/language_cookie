@@ -3,7 +3,6 @@
 namespace Drupal\language_cookie\EventSubscriber;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Executable\ExecutableInterface;
 use Drupal\Core\Executable\ExecutableManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
@@ -51,7 +50,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
   /**
    * The Language Cookie condition plugin manager.
    *
-   * @var \Drupal\Core\Executable\ExecutableManagerInterface $plugin_manager
+   * @var \Drupal\Core\Executable\ExecutableManagerInterface
    */
   protected $languageCookieConditionManager;
 
