@@ -27,12 +27,9 @@ function language_cookie_install() {
 function language_cookie_uninstall() {
   $language_types = \Drupal::languageManager()->getLanguageTypes();
 
+  $config = \Drupal::configFactory()->getEditable('language.types');
   foreach ($language_types as $type) {
-    $enabled_methods = \Drupal::configFactory()->get('language.types')->get('negotiation.' . $type . '.enabled') ?: array();
-    if (isset($enabled_methods[LanguageNegotiationCookie::METHOD_ID])) {
-      unset($enabled_methods[LanguageNegotiationCookie::METHOD_ID]);
-
-      \Drupal::configFactory()->getEditable('language.types')->set('negotiation.' . $type . '.enabled', $enabled_methods)->save();
-    }
+    $config->clear('negotiation.' . $type . '.enabled.' . LanguageNegotiationCookie::METHOD_ID);
   }
+  $config->save();
 }
