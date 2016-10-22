@@ -89,7 +89,7 @@ class LanguageSelectionPageConditionJSCookieRedirect extends LanguageSelectionPa
   /**
    * {@inheritdoc}
    */
-  public function alterPageContent(array &$content = array()) {
+  public function alterPageContent(array &$content = array(), $destination = '<front>') {
     $configuration = $this->getConfiguration();
 
     if ($configuration[$this->getPluginId()]) {
