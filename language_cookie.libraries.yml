@@ -4,4 +4,4 @@ language_cookie_js_redirect:
     js/language_cookie_js_redirect.js: {}
   dependencies:
     - core/jquery
-    - core/drupalSettings
+    - core/jquery.cookie

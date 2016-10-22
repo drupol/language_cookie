@@ -160,7 +160,7 @@ class LanguageCookieSubscriber implements EventSubscriberInterface {
       $param = $config->get('param');
 
       if ((!$request->cookies->has($param) || ($request->cookies->get($param) != $lang)) || $config->get('set_on_every_pageload')) {
-        $cookie = new Cookie($param, $lang, REQUEST_TIME + $config->get('time'), $config->get('path'), $config->get('domain'));
+        $cookie = new Cookie($param, $lang, REQUEST_TIME + $config->get('time'), $config->get('path'), $config->get('domain'), FALSE, FALSE);
         // Allow other modules to change the $cookie.
         $this->moduleHandler->alter('language_cookie', $cookie);
         $this->event->getResponse()->headers->setCookie($cookie);

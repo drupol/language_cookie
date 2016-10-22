@@ -1,8 +1,8 @@
-(function($, Drupal) {
+(function ($, Drupal, window) {
     Drupal.behaviors.language_cookie_js_redirect = {
         attach: function(context) {
             var cookieName = drupalSettings.language_cookie.param;
-            var language = readCookie(cookieName);
+            var language = $.cookie(cookieName);
 
             if (language) {
                 var targetUrl = $('a.language_selection_page_link_' + language).get(0).href;
@@ -21,13 +21,4 @@
         }
     };
 
-})(jQuery, Drupal);
-
-(function(){
-    function readCookie(a, b) {
-        b = document.cookie.match('(^|;)\\s*' + a + '\\s*=\\s*([^;]+)');
-        return b ? b.pop() : '';
-    }
-
-    window.readCookie = readCookie; // or expose it however you want
-})();
+})(jQuery, Drupal, window);
