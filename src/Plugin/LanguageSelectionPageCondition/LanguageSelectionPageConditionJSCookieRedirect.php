@@ -90,11 +90,15 @@ class LanguageSelectionPageConditionJSCookieRedirect extends LanguageSelectionPa
    * {@inheritdoc}
    */
   public function alterPageContent(array &$content = array()) {
-    parent::alterPageContent($content);
-    $config = $this->configFactory->get('language_cookie.negotiation');
+    $configuration = $this->getConfiguration();
 
-    $content['#attached']['library'][] = 'language_cookie/language_cookie_js_redirect';
-    $content['#attached']['drupalSettings']['language_cookie']['param'] = $config->get('param');
+    if ($configuration[$this->getPluginId()]) {
+      parent::alterPageContent($content);
+      $config = $this->configFactory->get('language_cookie.negotiation');
+
+      $content['#attached']['library'][] = 'language_cookie/language_cookie_js_redirect';
+      $content['#attached']['drupalSettings']['language_cookie']['param'] = $config->get('param');
+    }
   }
 
 }
