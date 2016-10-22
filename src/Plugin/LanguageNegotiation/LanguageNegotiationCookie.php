@@ -43,8 +43,14 @@ class LanguageNegotiationCookie extends LanguageNegotiationMethodBase implements
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The configuration factory.
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param array $plugin_definition
+   *   The plugin implementation definition.
    */
-  public function __construct(ConfigFactoryInterface $config_factory) {
+  public function __construct(ConfigFactoryInterface $config_factory, array $configuration, $plugin_id, array $plugin_definition) {
     $this->configFactory = $config_factory;
   }
 
@@ -52,7 +58,12 @@ class LanguageNegotiationCookie extends LanguageNegotiationMethodBase implements
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static($container->get('config.factory'));
+    return new static(
+      $container->get('config.factory'),
+      $configuration,
+      $plugin_id,
+      $plugin_definition
+    );
   }
 
   /**

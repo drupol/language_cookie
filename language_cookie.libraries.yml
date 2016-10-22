@@ -1,0 +1,7 @@
+language_cookie_js_redirect:
+  version: 1.0
+  js:
+    js/language_cookie_js_redirect.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
