@@ -1,6 +1,11 @@
+/**
+ * @file
+ * The language cookie JS file that handles the javascript redirection.
+ */
+
 (function ($, Drupal, window) {
     Drupal.behaviors.language_cookie_js_redirect = {
-        attach: function(context) {
+        attach: function (context) {
             var cookieName = drupalSettings.language_cookie.param;
             var language = $.cookie(cookieName);
 
@@ -13,7 +18,8 @@
 
                     if (navigator.appName == "Microsoft Internet Explorer" && (parseFloat(navigator.appVersion.split("MSIE")[1])) < 7) {
                         window.location.href = targetUrl;
-                    } else {
+                    }
+else {
                         window.location = targetUrl;
                     }
                 }
