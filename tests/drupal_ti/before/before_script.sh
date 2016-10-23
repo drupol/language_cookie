@@ -19,4 +19,4 @@ cd "$DRUPAL_TI_DRUPAL_DIR"
 mkdir -p "$DRUPAL_TI_DRUPAL_DIR/$DRUPAL_TI_MODULES_PATH"
 cd "$DRUPAL_TI_DRUPAL_DIR/$DRUPAL_TI_MODULES_PATH"
 
-git clone --depth 1 --branch 8.x-1.x https://github.com/drupol/language_selection_page.git
+git clone --depth 1 --branch 8.x-2.x https://github.com/drupol/language_selection_page.git
