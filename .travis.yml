@@ -75,9 +75,9 @@ install:
 
 before_script:
   - drupal-ti before_script
+  - drupal-ti --include drupal_ti/before/before_script.sh
 
 script:
-  - drupal-ti --include drupal_ti/script/script.sh
   - drupal-ti script
 
 after_script:
