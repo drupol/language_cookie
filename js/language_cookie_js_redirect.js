@@ -19,7 +19,7 @@
                     if (navigator.appName == "Microsoft Internet Explorer" && (parseFloat(navigator.appVersion.split("MSIE")[1])) < 7) {
                         window.location.href = targetUrl;
                     }
-else {
+                    else {
                         window.location = targetUrl;
                     }
                 }

@@ -3,6 +3,7 @@
 namespace Drupal\language_cookie;
 
 use Drupal\Core\Condition\ConditionInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Interface LanguageCookieConditionInterface.
@@ -65,5 +66,18 @@ interface LanguageCookieConditionInterface extends ConditionInterface {
    *   Returns itself.
    */
   public function setWeight($weight);
+
+  /**
+   * Post config save method.
+   *
+   * Method that gets triggered when the configuration of the form
+   * has been saved.
+   *
+   * @param array $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The FormState object.
+   */
+  public function postConfigSave(array &$form, FormStateInterface $form_state);
 
 }

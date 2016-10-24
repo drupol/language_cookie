@@ -86,4 +86,11 @@ abstract class LanguageCookieConditionBase extends ConditionPluginBase implement
     return $this->execute();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function postConfigSave(array &$form, FormStateInterface $form_state) {
+
+  }
+
 }

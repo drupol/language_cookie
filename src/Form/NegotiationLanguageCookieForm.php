@@ -131,7 +131,10 @@ class NegotiationLanguageCookieForm extends ConfigFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
 
-    $form_state->setValue('blacklisted_paths', array_filter(array_map('trim', explode(PHP_EOL, $form_state->getValue('blacklisted_paths')))));
+    /** @var \Drupal\language_cookie\LanguageCookieConditionInterface $condition */
+    foreach ($form_state->get(['conditions']) as $condition) {
+      $condition->validateConfigurationForm($form, $form_state);
+    }
   }
 
   /**
@@ -148,6 +151,11 @@ class NegotiationLanguageCookieForm extends ConfigFormBase {
       ->set('set_on_every_pageload', $form_state->getValue('set_on_every_pageload'))
       ->set('blacklisted_paths', $form_state->getValue('blacklisted_paths'))
       ->save();
+
+    /** @var \Drupal\language_cookie\LanguageCookieConditionInterface $condition */
+    foreach ($form_state->get(['conditions']) as $condition) {
+      $condition->postConfigSave($form, $form_state);
+    }
 
     // Redirect to the language negotiation page on submit (previous Drupal 7
     // behavior, and intended behavior for other language negotiation settings
